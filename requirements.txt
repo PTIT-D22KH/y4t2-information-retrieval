@@ -1,3 +1,4 @@
 pandas
 pyvi
-spacy
+rank-bm25
+scikit-learn
