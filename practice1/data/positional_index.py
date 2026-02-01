@@ -62,10 +62,16 @@ def retrieve(query, positional_index, doc_terms):
             if doc_id in positional_index[t1] and doc_id in positional_index[t2]:
                 pos1_list = positional_index[t1][doc_id]
                 pos2_list = positional_index[t2][doc_id]
+                found = False
                 for p1 in pos1_list:
                     for p2 in pos2_list:
                         if p2 - p1 == 1:
-                            score += 0.5
+                            found = True
+                            break
+                    if found:
+                        break
+                if found:
+                    score += 0.5
         scored.append((score, doc_id))
     scored.sort(key = lambda x : (-x[0], x[1]))
     return [doc_id for _, doc_id in scored[:TOP_K]]
