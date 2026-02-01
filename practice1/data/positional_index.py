@@ -2,6 +2,8 @@ import os
 import re
 import zipfile
 from collections import defaultdict
+from typing import Dict, List, Tuple
+
 import pandas as pd
 
 CRANFIELD_ZIP = "Cranfield"
@@ -30,62 +32,42 @@ def load_documents(data_path):
     print(f"Loaded {len(documents)} documents")
     return documents
 
-def build_positional_index(documents: dict[str, str]):
-    positional_index: dict[str, dict[str, set[int]]] = defaultdict(dict)
+def build_positional_index(documents: Dict[str, str]):
+    positional_index: Dict[str, Dict[str, List[int]]] = defaultdict(lambda : defaultdict(list))
     doc_terms = {}
+
     for doc_id, text in documents.items():
         terms = tokenize(text)
         doc_terms[doc_id] = set(terms)
-        doc_set = defaultdict(set)
-        for i in range(len(terms)):
-            doc_set[terms[i]].add(i)
-        for term in doc_set.keys():
-            positional_index[term][doc_id] = doc_set[term]
+        for position, term in enumerate(terms):
+            positional_index[term][doc_id].append(position)
     print(f"Positional index size: {len(positional_index)} terms")
     return positional_index, doc_terms
 
 def retrieve(query, positional_index, doc_terms):
     q_terms = tokenize(query)
-    if not q_terms:
-        return []
-
-    # candidate docs: union of docs containing any query term
     candidate_docs = set()
     for term in q_terms:
-        for d in positional_index.get(term, {}).keys():
-            candidate_docs.add(d)
+        if term in positional_index:
+            candidate_docs.update(positional_index[term].keys())
 
     scored = []
     for doc_id in candidate_docs:
-        # base score: number of unique query terms present in doc
-        score = sum(1 for t in set(q_terms) if doc_id in positional_index.get(t, {}))
-
-        # strict consecutive phrase check (exact order, no gaps)
-        phrase_found = False
-        first_positions = positional_index.get(q_terms[0], {}).get(doc_id, set())
-        if first_positions and len(q_terms) > 1:
-            # for each start position of first term, check consecutive positions for subsequent terms
-            for start in first_positions:
-                ok = True
-                for offset, term in enumerate(q_terms[1:], start=1):
-                    positions = positional_index.get(term, {}).get(doc_id, set())
-                    if (start + offset) not in positions:
-                        ok = False
-                        break
-                if ok:
-                    phrase_found = True
-                    break
-        elif first_positions:
-            # single-term query: any occurrence counts as a match
-            phrase_found = True
-
-        if phrase_found:
-            score += 5  # phrase bonus, tuneable
-
+        score = 0
+        for term in q_terms:
+            if doc_id in positional_index[term]:
+                score += 1
+        for i in range(len(q_terms) - 1):
+            t1, t2 = q_terms[i], q_terms[i + 1]
+            if doc_id in positional_index[t1] and doc_id in positional_index[t2]:
+                pos1_list = positional_index[t1][doc_id]
+                pos2_list = positional_index[t2][doc_id]
+                for p1 in pos1_list:
+                    for p2 in pos2_list:
+                        if p2 - p1 == 1:
+                            score += 0.5
         scored.append((score, doc_id))
-
-    # sort by score desc, then doc_id asc for deterministic output
-    scored.sort(key=lambda x: (-x[0], x[1]))
+    scored.sort(key = lambda x : (-x[0], x[1]))
     return [doc_id for _, doc_id in scored[:TOP_K]]
 
 def main():
