@@ -1,0 +1,9 @@
+[project]
+name = "y4t2-information-retrieval"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.14"
+dependencies = [
+    "ipykernel>=6.29.5",
+    "psutil==5.6.1",
+]
