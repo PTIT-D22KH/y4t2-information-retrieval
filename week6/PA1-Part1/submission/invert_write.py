@@ -1,27 +1,28 @@
 class BSBIIndex(BSBIIndex):
     def invert_write(self, td_pairs, index):
-        """Inverts td_pairs into postings_lists and writes them to the given index
-
-        Parameters
+        """Đảo ngược td_pairs thành danh sách posting và ghi chúng vào chỉ mục cho trước
+        
+        Tham số
         ----------
         td_pairs: List[Tuple[Int, Int]]
-            List of termID-docID pairs
+            Danh sách các cặp termID-docID
         index: InvertedIndexWriter
-            Inverted index on disk corresponding to the block       
+            Chỉ mục đảo trên đĩa tương ứng với khối       
         """
-        ### Begin your code
-        td_pairs = sorted(td_pairs, key=lambda x: self.term_id_map[x[0]])
+        ### Bắt đầu code của bạn
+        td_pairs = sorted(td_pairs, key = lambda x : self.term_id_map[x[0]])
         postings = []
-        last_term = ''
+        last_term = ""
         for pair in td_pairs:
             if pair[0] != last_term:
                 if last_term != '':
-                    index.append(last_term, list(set(postings))) # 保存上一个不同值的结果
-                postings = [] # 重新置空
+                    index.append(last_term, list(set(postings)))
+                postings = []
                 postings.append(pair[1])
                 last_term = pair[0]
             else:
                 postings.append(pair[1])
         if last_term:
             index.append(last_term, list(set(postings)))
-        ### End your code
+
+        ## Kết thúc code của bạn

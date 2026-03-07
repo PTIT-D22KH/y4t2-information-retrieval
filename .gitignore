@@ -67,7 +67,7 @@ instance/
 
 # Scrapy stuff:
 .scrapy
-
+https://www.meta.ai/?utm_source=facebook_bookmarks&fbclid=IwZXh0bgNhZW0CMTAAYnJpZBExdkVsV0pXWENTUTRkSTZKNnNydGMGYXBwX2lkEDIyMjAzOTE3ODgyMDA4OTIAAR6_azIJnvASr1V_IRHW92gWPlyWp9fp50swXfmgbX8WVN1tZXlptePb0B4z_g_aem_KU0xAEX2zaMe-dlW4UqZ6g
 # Sphinx documentation
 docs/_build/
 
@@ -207,3 +207,4 @@ marimo/_lsp/
 __marimo__/
 **/.idea/**
 /week6/PA1-Part1/pa1-data.zip
+**/BSBI.index

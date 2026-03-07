@@ -1,34 +1,34 @@
 class IdMap:
-    """Helper class to store a mapping from strings to ids."""
+    """Lớp trợ giúp để lưu trữ ánh xạ từ chuỗi sang id."""
     def __init__(self):
         self.str_to_id = {}
         self.id_to_str = []
-
+        
     def __len__(self):
-        """Return number of terms stored in the IdMap"""
+        """Trả về số lượng term được lưu trong IdMap"""
         return len(self.id_to_str)
-
+        
     def _get_str(self, i):
-        """Returns the string corresponding to a given id (`i`)."""
-        ### Begin your code
+        """Trả về chuỗi tương ứng với id (`i`) cho trước."""
+        ### Bắt đầu code của bạn
         return self.id_to_str[i]
-        ### End your code
-
+        ### Kết thúc code của bạn
+        
     def _get_id(self, s):
-        """Returns the id corresponding to a string (`s`). 
-        If `s` is not in the IdMap yet, then assigns a new id and returns the new id.
+        """Trả về id tương ứng với chuỗi (`s`). 
+        Nếu `s` chưa có trong IdMap, gán một id mới và trả về id mới đó.
         """
-        ### Begin your code
-        idx = self.str_to_id.get(s, len(self.id_to_str))
-        if s not in self.str_to_id.keys():
-            self.str_to_id[s] = idx
+        ### Bắt đầu code của bạn
+        index = self.str_to_id.get(s, len(self.id_to_str))
+        if s not in self.str_to_id:
+            self.str_to_id[s] = index
             self.id_to_str.append(s)
-        return idx
-        ### End your code
-
+        return index
+        ### Kết thúc code của bạn
+            
     def __getitem__(self, key):
-        """If `key` is a integer, use _get_str; 
-           If `key` is a string, use _get_id;"""
+        """Nếu `key` là số nguyên, sử dụng _get_str; 
+           Nếu `key` là chuỗi, sử dụng _get_id;"""
         if type(key) is int:
             return self._get_str(key)
         elif type(key) is str:

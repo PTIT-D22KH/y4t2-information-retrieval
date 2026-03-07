@@ -5,33 +5,34 @@ class InvertedIndexWriter(InvertedIndex):
         return self
 
     def append(self, term, postings_list):
-        """Appends the term and postings_list to end of the index file.
+        """Thêm term và postings_list vào cuối file chỉ mục.
+        
+        Hàm này thực hiện ba việc:
+        1. Mã hóa postings_list sử dụng self.postings_encoding
+        2. Lưu metadata dưới dạng self.terms và self.postings_dict
+           Lưu ý rằng self.postings_dict ánh xạ termID sang bộ 3 gồm 
+           (vị_trí_bắt_đầu_trong_file_index, 
+           số_posting_trong_danh_sách, 
+           độ_dài_byte_của_danh_sách_posting)
+        3. Thêm luồng byte vào file chỉ mục trên đĩa
 
-        This function does three things, 
-        1. Encodes the postings_list using self.postings_encoding
-        2. Stores metadata in the form of self.terms and self.postings_dict
-           Note that self.postings_dict maps termID to a 3 tuple of 
-           (start_position_in_index_file, 
-           number_of_postings_in_list, 
-           length_in_bytes_of_postings_list)
-        3. Appends the bytestream to the index file on disk
-
-        Hint: You might find it helpful to read the Python I/O docs
-        (https://docs.python.org/3/tutorial/inputoutput.html) for
-        information about appending to the end of a file.
-
-        Parameters
+        Gợi ý: Bạn có thể thấy hữu ích khi đọc tài liệu Python I/O
+        (https://docs.python.org/3/tutorial/inputoutput.html) để biết
+        thông tin về cách thêm vào cuối file.
+        
+        Tham số
         ----------
         term:
-            term or termID is the unique identifier for the term
+            term hoặc termID là định danh duy nhất cho term
         postings_list: List[Int]
-            List of docIDs where the term appears
+            Danh sách các docID nơi term xuất hiện
         """
-        ### Begin your code
-        last_term = self.terms[-1] if len(self.terms)!=0 else None
-        start_pos = (self.postings_dict[last_term][0]+self.postings_dict[last_term][2]) if last_term is not None else 0
-        postings = self.postings_encoding.encode(sorted(postings_list))
-        self.postings_dict[term] = (start_pos, len(postings_list), len(postings))
+        ### Bắt đầu code của bạn
+        encoded_postings_list = self.postings_encoding.encode(sorted(postings_list))
+        last_term = self.terms[-1] if len(self.terms) != 0 else None
+        start_pos =  (self.postings_dict[last_term][0] + self.postings_dict[last_term][2]) if last_term is not None else 0
+        self.postings_dict[term] = (start_pos, len(postings_list), len(encoded_postings_list))
         self.terms.append(term)
-        self.index_file.write(postings)
-        ### End your code
+        self.index_file.write(encoded_postings_list)
+
+        ### Kết thúc code của bạn

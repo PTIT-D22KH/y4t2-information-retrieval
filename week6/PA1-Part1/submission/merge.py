@@ -3,7 +3,7 @@ import heapq
 class BSBIIndex(BSBIIndex):
     def merge(self, indices, merged_index):
         """Hợp nhất nhiều chỉ mục đảo thành một chỉ mục duy nhất
-
+        
         Tham số
         ----------
         indices: List[InvertedIndexIterator]
