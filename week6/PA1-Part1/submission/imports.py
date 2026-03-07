@@ -1,5 +1,5 @@
 
-# Bạn có thể thêm các import bổ sung ở đây
+# You can add additional imports here
 import sys
 import pickle as pkl
 import array
