@@ -208,3 +208,7 @@ __marimo__/
 **/.idea/**
 /week6/PA1-Part1/pa1-data.zip
 **/BSBI.index
+**/output_dir
+**/toy_output_dir
+**/pa1-data
+**/pa1-data.zip
